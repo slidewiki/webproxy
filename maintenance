@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ -z "$BASENAME" ]; then
+    echo "error: BASENAME variable not set!"
+    exit -1
+fi
+
+# switch maintenance configuration on/off
+if [[ $# -eq 1 && $1 = "on" ]]; then
+    sed -i "s/{BASENAME}/$BASENAME/g" /etc/nginx/conf.d/maintenance.conf
+    ln -s /etc/nginx/conf.d/maintenance.conf tmplink
+    mv -T tmplink /etc/nginx/conf.d/active.conf
+    nginx -s reload
+elif [[ $# -eq 1 &&  $1 = "off" ]]; then
+    ln -s /etc/nginx/conf.d/default.conf tmplink
+    mv -T tmplink /etc/nginx/conf.d/active.conf
+    nginx -s reload
+fi
+
+# inform which configuration is active
+if [ "`readlink /etc/nginx/conf.d/active.conf`" -ef "/etc/nginx/conf.d/default.conf" ]; then
+    echo "normal operation"
+elif [ "`readlink /etc/nginx/conf.d/active.conf`" -ef "/etc/nginx/conf.d/maintenance.conf" ]; then
+    echo "maintenance mode"
+fi
