@@ -8,7 +8,8 @@ Switch to normal operation: `docker exec webproxy maintenance off`
 
 Additional to the sharing the host's Docker socket for docker-gen the `BASENAME` environment variable has to be set to the base domain name of the instance. 
 
-** Example: **
+__Example:__
+
 `docker run -d --name proxy -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro -e BASENAME=slidewiki.org slidewiki-webproxy`
 
 ## Info Page Content ##
